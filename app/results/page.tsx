@@ -95,12 +95,28 @@ function ResultsPageContent() {
     const fetchAnalysis = async () => {
       try {
         const response = await fetch(`/api/analyze?url=${encodeURIComponent(url)}`);
+        
+        // Get the response text first
+        const responseText = await response.text();
+        
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to analyze URL");
+          // Try to parse as JSON, but handle HTML responses
+          try {
+            const errorData = JSON.parse(responseText);
+            throw new Error(errorData.error || "Failed to analyze URL");
+          } catch (parseError) {
+            // If JSON parsing fails, it's likely an HTML error page
+            throw new Error(`Failed to analyze URL: ${response.status} ${response.statusText}`);
+          }
         }
-        const result = await response.json();
-        setData(result);
+        
+        // Parse the successful response
+        try {
+          const result = JSON.parse(responseText);
+          setData(result);
+        } catch (parseError) {
+          throw new Error("Received invalid response from server. Please try again.");
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {

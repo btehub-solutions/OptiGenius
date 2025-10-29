@@ -50,8 +50,30 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Registration error:", error);
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      console.error("Error details:", error.message);
+      console.error("Error stack:", error.stack);
+      
+      // Check for common database errors
+      if (error.message.includes("connect") || error.message.includes("ECONNREFUSED")) {
+        return NextResponse.json(
+          { error: "Database connection failed. Please ensure the database is running." },
+          { status: 500 }
+        );
+      }
+      
+      if (error.message.includes("Unique constraint")) {
+        return NextResponse.json(
+          { error: "User already exists" },
+          { status: 400 }
+        );
+      }
+    }
+    
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Something went wrong. Please check the server logs for details." },
       { status: 500 }
     );
   }
