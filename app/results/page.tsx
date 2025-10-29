@@ -2,10 +2,11 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle2, XCircle, AlertCircle, ExternalLink, Sparkles, ChevronDown, ChevronUp, Brain, TrendingUp, Users, Building2, MapPin, Download, FileText } from "lucide-react";
+import { ArrowLeft, CheckCircle2, XCircle, AlertCircle, ExternalLink, Sparkles, ChevronDown, ChevronUp, Brain, TrendingUp, Users, Building2, MapPin, Download, FileText, Save } from "lucide-react";
 import { exportToPDF, exportToMarkdown } from "@/lib/exportUtils";
 
 interface SEOData {
@@ -69,15 +70,19 @@ interface SEOData {
     };
     recommendations: string[];
   };
+  isAuthenticated?: boolean;
 }
 
 function ResultsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { data: session } = useSession();
   const [data, setData] = useState<SEOData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [suggestionsExpanded, setSuggestionsExpanded] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const url = searchParams.get("url");
@@ -105,6 +110,34 @@ function ResultsPageContent() {
 
     fetchAnalysis();
   }, [searchParams]);
+
+  const handleSaveReport = async () => {
+    if (!session || !data) return;
+
+    setSaving(true);
+    try {
+      const response = await fetch("/api/reports", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: data.url,
+          score: data.score,
+          data: data,
+        }),
+      });
+
+      if (response.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      }
+    } catch (error) {
+      console.error("Error saving report:", error);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -169,6 +202,16 @@ function ResultsPageContent() {
               </a>
             </div>
             <div className="flex gap-3">
+              {session && (
+                <Button
+                  onClick={handleSaveReport}
+                  disabled={saving || saved}
+                  className={saved ? "bg-green-600 hover:bg-green-700" : "bg-purple-600 hover:bg-purple-700"}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {saved ? "Saved!" : saving ? "Saving..." : "Save Report"}
+                </Button>
+              )}
               <Button
                 onClick={() => exportToPDF(data)}
                 className="bg-blue-600 hover:bg-blue-700 text-white"

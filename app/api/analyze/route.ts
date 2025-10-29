@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import * as cheerio from "cheerio";
 import OpenAI from "openai";
 import nlp from "compromise";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -159,6 +161,10 @@ function generateGEORecommendations(
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if user is authenticated (optional for analysis)
+    const session = await getServerSession(authOptions);
+    const isAuthenticated = !!session?.user?.id;
+
     const searchParams = request.nextUrl.searchParams;
     const url = searchParams.get("url");
 
@@ -384,14 +390,15 @@ export async function GET(request: NextRequest) {
     // GEO Analysis - Generative Engine Optimization
     const geoAnalysis = performGEOAnalysis(contentPreview, title, metaDescription, h1Tags, h2Tags);
 
-    // Generate AI insights using OpenAI
+    // Generate AI insights using OpenAI (only for authenticated users)
     let aiInsights = null;
     try {
       const openaiApiKey = process.env.OPENAI_API_KEY;
       
       console.log("OpenAI API Key present:", !!openaiApiKey);
+      console.log("User authenticated:", isAuthenticated);
       
-      if (openaiApiKey) {
+      if (openaiApiKey && isAuthenticated) {
         const openai = new OpenAI({
           apiKey: openaiApiKey,
         });
@@ -462,6 +469,12 @@ Format your response as JSON with this structure:
             };
           }
         }
+      } else if (!isAuthenticated) {
+        console.log("User not authenticated - AI insights not available");
+        aiInsights = {
+          summary: "Sign in to access AI-powered insights and suggestions.",
+          suggestions: ["Create an account to unlock advanced AI analysis features"]
+        };
       } else {
         console.log("No OpenAI API key found in environment variables");
       }
@@ -511,6 +524,7 @@ Format your response as JSON with this structure:
       recommendations,
       aiInsights,
       geoAnalysis,
+      isAuthenticated,
     };
 
     return NextResponse.json(seoData);

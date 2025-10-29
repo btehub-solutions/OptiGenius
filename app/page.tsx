@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles, User, LogOut, LayoutDashboard } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,15 +38,52 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="container mx-auto px-4 py-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-2 mb-4">
+        {/* Header with Auth */}
+        <div className="flex justify-between items-center mb-16">
+          <div className="flex items-center gap-2">
             <Sparkles className="w-8 h-8 text-blue-600" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              OptiGenius
-            </h1>
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                OptiGenius
+              </h1>
+              <p className="text-gray-600 text-xs">Powered by AI-driven SEO insights</p>
+            </div>
           </div>
-          <p className="text-gray-600 text-sm">Powered by AI-driven SEO insights</p>
+          
+          <div className="flex items-center gap-3">
+            {status === "authenticated" ? (
+              <>
+                <Link href="/dashboard">
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button
+                  variant="outline"
+                  onClick={() => signOut()}
+                  className="flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/signin">
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <User className="w-4 h-4" />
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Hero Section */}
@@ -100,7 +140,9 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-sm text-gray-500 text-center">
-                No signup required • Instant results • 100% free
+                {status === "authenticated" 
+                  ? "Save reports • View history • AI suggestions included"
+                  : "No signup required • Instant results • Sign in for AI insights"}
               </p>
             </form>
           </div>
