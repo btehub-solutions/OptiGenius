@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, XCircle, AlertCircle, ExternalLink, Sparkles, ChevronDown, ChevronUp, Brain, TrendingUp, Users, Building2, MapPin, Download, FileText, Save } from "lucide-react";
 import { exportToPDF, exportToMarkdown } from "@/lib/exportUtils";
 import AIChatPanel from "@/components/AIChatPanel";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface SEOData {
   url: string;
@@ -197,7 +198,7 @@ function ResultsPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -207,18 +208,19 @@ function ResultsPageContent() {
           </Button>
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">SEO Analysis Results</h1>
+              <h1 className="text-3xl font-bold mb-2 dark:text-white">Website Analysis Results</h1>
               <a
                 href={data.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline flex items-center gap-1"
+                className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
               >
                 {data.url}
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
             <div className="flex gap-3">
+              <ThemeToggle />
               {session && (
                 <Button
                   onClick={handleSaveReport}
@@ -248,10 +250,18 @@ function ResultsPageContent() {
           </div>
         </div>
 
-        {/* Score Cards Grid */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {/* SEO Score Card */}
-          <Card className="border-2">
+        {/* SEO Section */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-1 flex-1 bg-gradient-to-r from-green-400 to-green-600 rounded"></div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">SEO Analysis</h2>
+            <div className="h-1 flex-1 bg-gradient-to-l from-green-400 to-green-600 rounded"></div>
+          </div>
+          <p className="text-gray-600 dark:text-gray-300 text-center mb-6">Traditional Search Engine Optimization metrics</p>
+        
+        {/* SEO Score Card */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
             <CardHeader>
               <CardTitle>Overall SEO Score</CardTitle>
               <CardDescription>Based on key SEO factors</CardDescription>
@@ -286,13 +296,25 @@ function ResultsPageContent() {
               </div>
             </CardContent>
           </Card>
+        </div>
+        </div>
 
-          {/* GEO Analysis Score Card */}
+        {/* GEO Section */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-1 flex-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded"></div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">GEO Analysis</h2>
+            <div className="h-1 flex-1 bg-gradient-to-l from-blue-400 to-blue-600 rounded"></div>
+          </div>
+          <p className="text-gray-600 dark:text-gray-300 text-center mb-6">Generative Engine Optimization for AI-powered platforms</p>
+
+        {/* GEO Score Card */}
+        <div className="max-w-2xl mx-auto mb-8">
           <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Brain className="w-6 h-6 text-blue-600" />
-                GEO Analysis Score
+                GEO Score
               </CardTitle>
               <CardDescription>AI Engine Optimization readiness</CardDescription>
             </CardHeader>
@@ -320,7 +342,7 @@ function ResultsPageContent() {
           </Card>
         </div>
 
-        {/* GEO Analysis Detailed Card */}
+        {/* GEO Analysis Detailed Card */
         <Card className="mb-8 border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -472,6 +494,7 @@ function ResultsPageContent() {
             )}
           </CardContent>
         </Card>
+        </div>
 
         {/* AI Insights Card */}
         {data.aiInsights && (
@@ -503,7 +526,7 @@ function ResultsPageContent() {
                 >
                   <span className="flex items-center gap-2">
                     <span className="text-purple-600">💡</span>
-                    SEO Improvement Suggestions ({data.aiInsights.suggestions.length})
+                    Improvement Suggestions ({data.aiInsights.suggestions.length})
                   </span>
                   {suggestionsExpanded ? (
                     <ChevronUp className="w-5 h-5" />
@@ -532,9 +555,15 @@ function ResultsPageContent() {
           </Card>
         )}
 
-        {/* Issues and Recommendations */}
+        {/* SEO Issues and Recommendations */}
         {(data.issues.length > 0 || data.recommendations.length > 0) && (
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-1 flex-1 bg-gradient-to-r from-green-400 to-green-600 rounded"></div>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">SEO Issues & Recommendations</h2>
+              <div className="h-1 flex-1 bg-gradient-to-l from-green-400 to-green-600 rounded"></div>
+            </div>
+          <div className="grid md:grid-cols-2 gap-6">
             {data.issues.length > 0 && (
               <Card>
                 <CardHeader>
@@ -577,9 +606,16 @@ function ResultsPageContent() {
               </Card>
             )}
           </div>
+          </div>
         )}
 
-        {/* Detailed Analysis Tabs */}
+        {/* SEO Detailed Analysis */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-1 flex-1 bg-gradient-to-r from-green-400 to-green-600 rounded"></div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">SEO Technical Details</h2>
+            <div className="h-1 flex-1 bg-gradient-to-l from-green-400 to-green-600 rounded"></div>
+          </div>
         <Tabs defaultValue="meta" className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 mb-6">
             <TabsTrigger value="meta">Meta Tags</TabsTrigger>
@@ -901,6 +937,7 @@ function ResultsPageContent() {
             </div>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
 
       {/* AI Chat Panel */}

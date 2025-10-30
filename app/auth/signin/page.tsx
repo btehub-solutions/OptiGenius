@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function SignIn() {
   const router = useRouter();
@@ -69,30 +70,33 @@ export default function SignIn() {
   const hasOAuthProviders = false; // Set to true after configuring OAuth in .env
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
+          <div className="flex justify-end mb-4">
+            <ThemeToggle />
+          </div>
           <Link href="/" className="inline-flex items-center gap-2 mb-4">
             <Sparkles className="w-8 h-8 text-blue-600" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               OptiGenius
             </h1>
           </Link>
-          <p className="text-gray-600">Sign in to your account</p>
+          <p className="text-gray-600 dark:text-gray-400">Sign in to your account</p>
         </div>
 
         {/* Sign In Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+              <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Email
               </label>
               <Input
@@ -106,7 +110,7 @@ export default function SignIn() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
               <Input
@@ -135,7 +139,7 @@ export default function SignIn() {
                   <div className="w-full border-t border-gray-300"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Or continue with</span>
                 </div>
               </div>
 
@@ -182,7 +186,7 @@ export default function SignIn() {
             </div>
           )}
 
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
             Don&apos;t have an account?{" "}
             <Link
               href="/auth/signup"

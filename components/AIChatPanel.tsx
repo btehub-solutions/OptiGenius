@@ -6,6 +6,101 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MessageCircle, X, Send, Loader2, Sparkles, Minimize2, Maximize2 } from "lucide-react";
 
+// Markdown renderer component
+function MarkdownText({ content }: { content: string }) {
+  const renderMarkdown = (text: string) => {
+    // Split by code blocks first
+    const parts = text.split(/(```[\s\S]*?```|`[^`]+`)/);
+    
+    return parts.map((part, index) => {
+      // Handle code blocks
+      if (part.startsWith('```')) {
+        const code = part.slice(3, -3).trim();
+        return (
+          <pre key={index} className="bg-black/90 text-gray-100 p-3 rounded-lg my-2 overflow-x-auto text-sm">
+            <code>{code}</code>
+          </pre>
+        );
+      }
+      
+      // Handle inline code
+      if (part.startsWith('`') && part.endsWith('`')) {
+        return (
+          <code key={index} className="bg-gray-200 text-red-600 px-1.5 py-0.5 rounded text-sm font-mono">
+            {part.slice(1, -1)}
+          </code>
+        );
+      }
+      
+      // Process regular text with markdown
+      const processedText = part
+        // Bold text
+        .split(/\*\*([^*]+)\*\*/g)
+        .map((segment, i) => 
+          i % 2 === 1 ? <strong key={`b-${index}-${i}`}>{segment}</strong> : segment
+        )
+        .flatMap((segment) => {
+          if (typeof segment !== 'string') return segment;
+          // Italic text
+          return segment.split(/\*([^*]+)\*/g).map((s, i) => 
+            i % 2 === 1 ? <em key={`i-${index}-${i}`}>{s}</em> : s
+          );
+        });
+      
+      return <span key={index}>{processedText}</span>;
+    });
+  };
+  
+  // Split content by newlines and render each line
+  const lines = content.split('\n');
+  
+  return (
+    <div className="space-y-2">
+      {lines.map((line, index) => {
+        // Handle bullet points
+        if (line.trim().startsWith('- ')) {
+          return (
+            <div key={index} className="flex gap-2 ml-2">
+              <span className="text-gray-600 mt-1">•</span>
+              <span className="flex-1">{renderMarkdown(line.slice(2))}</span>
+            </div>
+          );
+        }
+        
+        // Handle numbered lists
+        const numberedMatch = line.match(/^(\d+)\.\s/);
+        if (numberedMatch) {
+          return (
+            <div key={index} className="flex gap-2 ml-2">
+              <span className="text-gray-600 font-semibold">{numberedMatch[1]}.</span>
+              <span className="flex-1">{renderMarkdown(line.slice(numberedMatch[0].length))}</span>
+            </div>
+          );
+        }
+        
+        // Handle headers
+        if (line.startsWith('### ')) {
+          return <h4 key={index} className="font-semibold text-sm mt-2">{line.slice(4)}</h4>;
+        }
+        if (line.startsWith('## ')) {
+          return <h3 key={index} className="font-semibold text-base mt-2">{line.slice(3)}</h3>;
+        }
+        if (line.startsWith('# ')) {
+          return <h2 key={index} className="font-bold text-lg mt-2">{line.slice(2)}</h2>;
+        }
+        
+        // Regular paragraph
+        if (line.trim()) {
+          return <p key={index}>{renderMarkdown(line)}</p>;
+        }
+        
+        // Empty line
+        return <div key={index} className="h-2" />;
+      })}
+    </div>
+  );
+}
+
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -129,8 +224,8 @@ export default function AIChatPanel({ analysisContext, isAuthenticated }: AIChat
         </Button>
 
         {isOpen && (
-          <Card className="absolute bottom-16 right-0 w-80 shadow-2xl">
-            <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+          <Card className="absolute bottom-0 right-0 w-80 shadow-2xl">
+            <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Sparkles className="w-5 h-5" />
@@ -140,9 +235,10 @@ export default function AIChatPanel({ analysisContext, isAuthenticated }: AIChat
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsOpen(false)}
-                  className="text-white hover:bg-white/20"
+                  className="text-white hover:bg-red-500/50 hover:scale-110 transition-all h-8 w-8 rounded-full"
+                  title="Close chat"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </Button>
               </div>
             </CardHeader>
@@ -171,7 +267,7 @@ export default function AIChatPanel({ analysisContext, isAuthenticated }: AIChat
 
       {/* Chat Panel */}
       {isOpen && (
-        <Card className={`absolute bottom-16 right-0 shadow-2xl transition-all ${
+        <Card className={`absolute bottom-0 right-0 shadow-2xl transition-all ${
           isMinimized ? "w-80 h-16" : "w-96 h-[600px]"
         }`}>
           <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4">
@@ -180,12 +276,13 @@ export default function AIChatPanel({ analysisContext, isAuthenticated }: AIChat
                 <Sparkles className="w-5 h-5" />
                 AI SEO Assistant
               </CardTitle>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsMinimized(!isMinimized)}
-                  className="text-white hover:bg-white/20 h-8 w-8"
+                  className="text-white hover:bg-white/30 hover:scale-110 transition-all h-8 w-8 rounded-full"
+                  title={isMinimized ? "Maximize" : "Minimize"}
                 >
                   {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
                 </Button>
@@ -193,9 +290,10 @@ export default function AIChatPanel({ analysisContext, isAuthenticated }: AIChat
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsOpen(false)}
-                  className="text-white hover:bg-white/20 h-8 w-8"
+                  className="text-white hover:bg-red-500/50 hover:scale-110 transition-all h-8 w-8 rounded-full"
+                  title="Close chat"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                 </Button>
               </div>
             </div>
@@ -236,11 +334,19 @@ export default function AIChatPanel({ analysisContext, isAuthenticated }: AIChat
                           className={`max-w-[80%] rounded-lg p-3 ${
                             msg.role === "user"
                               ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white"
-                              : "bg-gray-100 text-gray-800"
+                              : "bg-gray-50 text-gray-900 border border-gray-200"
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                          <p className="text-xs mt-1 opacity-70">
+                          <div className="text-sm leading-relaxed">
+                            {msg.role === "user" ? (
+                              <p className="whitespace-pre-wrap">{msg.content}</p>
+                            ) : (
+                              <MarkdownText content={msg.content} />
+                            )}
+                          </div>
+                          <p className={`text-xs mt-2 ${
+                            msg.role === "user" ? "opacity-70" : "text-gray-500"
+                          }`}>
                             {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </p>
                         </div>
