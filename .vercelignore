@@ -7,6 +7,8 @@
 /prisma/dev.db
 /prisma/dev.db-journal
 /scripts
+# Documentation files (keep for GitHub, exclude from Vercel build)
+# Note: These are in .vercelignore but NOT in .gitignore
 *.md
 !README.md
 generate-secret.js
