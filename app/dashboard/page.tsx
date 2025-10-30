@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, Trash2, ExternalLink, Calendar } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import Footer from "@/components/Footer";
 
 interface Report {
   id: string;
@@ -88,7 +89,8 @@ export default function Dashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <main className="flex-1">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -164,7 +166,7 @@ export default function Dashboard() {
                         href={report.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm flex items-center gap-1">
+                        className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm flex items-center gap-1"
                       >
                         {report.url}
                         <ExternalLink className="w-3 h-3" />
@@ -193,5 +195,7 @@ export default function Dashboard() {
         </div>
       </div>
     </main>
+    <Footer />
+    </div>
   );
 }

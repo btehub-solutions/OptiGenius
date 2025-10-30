@@ -10,6 +10,7 @@ import { ArrowLeft, CheckCircle2, XCircle, AlertCircle, ExternalLink, Sparkles, 
 import { exportToPDF, exportToMarkdown } from "@/lib/exportUtils";
 import AIChatPanel from "@/components/AIChatPanel";
 import { ThemeToggle } from "@/components/theme-toggle";
+import Footer from "@/components/Footer";
 
 interface SEOData {
   url: string;
@@ -198,7 +199,8 @@ function ResultsPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="flex-1">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -261,7 +263,7 @@ function ResultsPageContent() {
         
         {/* SEO Score Card */}
         <div className="max-w-2xl mx-auto mb-8">
-          <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+          <Card className="border-2 border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900 dark:to-emerald-900">
             <CardHeader>
               <CardTitle>Overall SEO Score</CardTitle>
               <CardDescription>Based on key SEO factors</CardDescription>
@@ -310,7 +312,7 @@ function ResultsPageContent() {
 
         {/* GEO Score Card */}
         <div className="max-w-2xl mx-auto mb-8">
-          <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50">
+          <Card className="border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900 dark:to-cyan-900">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Brain className="w-6 h-6 text-blue-600" />
@@ -343,7 +345,7 @@ function ResultsPageContent() {
         </div>
 
         {/* GEO Analysis Detailed Card */
-        <Card className="mb-8 border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50">
+        <Card className="mb-8 border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900 dark:to-cyan-900">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Brain className="w-6 h-6 text-blue-600" />
@@ -498,7 +500,7 @@ function ResultsPageContent() {
 
         {/* AI Insights Card */}
         {data.aiInsights && (
-          <Card className="mb-8 border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50">
+          <Card className="mb-8 border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900 dark:to-blue-900">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-6 h-6 text-purple-600" />
@@ -938,7 +940,6 @@ function ResultsPageContent() {
           </TabsContent>
         </Tabs>
         </div>
-      </div>
 
       {/* AI Chat Panel */}
       <AIChatPanel
@@ -954,6 +955,9 @@ function ResultsPageContent() {
         }}
         isAuthenticated={!!session}
       />
+      </div>
+      </div>
+      <Footer />
     </div>
   );
 }

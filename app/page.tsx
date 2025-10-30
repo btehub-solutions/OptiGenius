@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Sparkles, User, LogOut, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -37,7 +38,8 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <main className="flex-1">
       <div className="container mx-auto px-4 py-16">
         {/* Header with Auth */}
         <div className="flex justify-between items-center mb-16">
@@ -182,5 +184,7 @@ export default function Home() {
         </div>
       </div>
     </main>
+    <Footer />
+    </div>
   );
 }
