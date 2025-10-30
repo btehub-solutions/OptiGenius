@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, XCircle, AlertCircle, ExternalLink, Sparkles, ChevronDown, ChevronUp, Brain, TrendingUp, Users, Building2, MapPin, Download, FileText, Save } from "lucide-react";
 import { exportToPDF, exportToMarkdown } from "@/lib/exportUtils";
+import AIChatPanel from "@/components/AIChatPanel";
 
 interface SEOData {
   url: string;
@@ -901,6 +902,21 @@ function ResultsPageContent() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* AI Chat Panel */}
+      <AIChatPanel
+        analysisContext={{
+          url: data.url,
+          score: data.score,
+          title: data.title,
+          metaDescription: data.metaDescription,
+          geoAnalysis: data.geoAnalysis,
+          aiInsights: data.aiInsights,
+          issues: data.issues,
+          recommendations: data.recommendations,
+        }}
+        isAuthenticated={!!session}
+      />
     </div>
   );
 }

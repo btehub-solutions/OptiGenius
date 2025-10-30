@@ -187,11 +187,51 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch the page content
-    const response = await fetch(targetUrl.toString(), {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; OptiGenius/1.0; +https://optigenius.com)",
-      },
-    });
+    let response;
+    try {
+      response = await fetch(targetUrl.toString(), {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; OptiGenius/1.0; +https://optigenius.com)",
+        },
+        signal: AbortSignal.timeout(15000), // 15 second timeout
+      });
+    } catch (fetchError: any) {
+      console.error("Fetch error:", fetchError);
+      console.error("Error details:", {
+        name: fetchError.name,
+        message: fetchError.message,
+        code: fetchError.code,
+        cause: fetchError.cause
+      });
+      
+      // Handle specific fetch errors
+      if (fetchError.name === 'AbortError' || fetchError.name === 'TimeoutError') {
+        return NextResponse.json(
+          { error: `Request timed out while trying to reach ${targetUrl.hostname}. The website may be slow or unresponsive.` },
+          { status: 504 }
+        );
+      } else if (fetchError.code === 'ENOTFOUND' || fetchError.cause?.code === 'ENOTFOUND') {
+        return NextResponse.json(
+          { error: `Unable to reach ${targetUrl.hostname}. The domain may not exist or there may be a DNS resolution issue. Please verify the URL is correct.` },
+          { status: 404 }
+        );
+      } else if (fetchError.code === 'ECONNREFUSED') {
+        return NextResponse.json(
+          { error: `Connection refused by ${targetUrl.hostname}. The server may be down or blocking requests.` },
+          { status: 503 }
+        );
+      } else if (fetchError.code === 'ETIMEDOUT') {
+        return NextResponse.json(
+          { error: `Request timed out while trying to reach ${targetUrl.hostname}.` },
+          { status: 504 }
+        );
+      } else {
+        return NextResponse.json(
+          { error: `Network error: ${fetchError.message || 'Unable to fetch the URL'}. Please check your internet connection and try again.` },
+          { status: 500 }
+        );
+      }
+    }
 
     if (!response.ok) {
       return NextResponse.json(
@@ -530,8 +570,23 @@ Format your response as JSON with this structure:
     return NextResponse.json(seoData);
   } catch (error) {
     console.error("Error analyzing URL:", error);
+    
+    // Provide more specific error messages
+    let errorMessage = "Failed to analyze URL. Please check the URL and try again.";
+    
+    if (error instanceof Error) {
+      // Check for specific error types
+      if (error.message.includes('ENOTFOUND')) {
+        errorMessage = "Unable to reach the domain. Please verify the URL is correct and the website is online.";
+      } else if (error.message.includes('timeout')) {
+        errorMessage = "Request timed out. The website may be slow or unresponsive.";
+      } else if (error.message.includes('certificate') || error.message.includes('SSL')) {
+        errorMessage = "SSL certificate error. The website may have security issues.";
+      }
+    }
+    
     return NextResponse.json(
-      { error: "Failed to analyze URL. Please check the URL and try again." },
+      { error: errorMessage },
       { status: 500 }
     );
   }
