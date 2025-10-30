@@ -157,6 +157,34 @@ npm run build
 npm start
 ```
 
+## 🚀 Deploy to Vercel
+
+OptiGenius is optimized for deployment on Vercel with PostgreSQL database.
+
+### Quick Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/optigenius)
+
+### Manual Deployment
+
+For detailed deployment instructions, see **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)**
+
+**Quick Steps:**
+1. Push your code to GitHub/GitLab/Bitbucket
+2. Import project to Vercel
+3. Add Vercel Postgres database
+4. Configure environment variables
+5. Deploy!
+
+**Required Environment Variables:**
+- `DATABASE_URL` - PostgreSQL connection string
+- `DIRECT_URL` - Direct PostgreSQL connection
+- `NEXTAUTH_URL` - Your production URL
+- `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
+- `OPENAI_API_KEY` - Your OpenAI API key
+
+See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for complete setup guide.
+
 ## License
 
 MIT
