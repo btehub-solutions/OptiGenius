@@ -157,17 +157,29 @@ npm run build
 npm start
 ```
 
-## 🚀 Deploy to Vercel
+## 🚀 Deployment
 
-OptiGenius is optimized for deployment on Vercel with PostgreSQL database.
+### ⚠️ Important: GitHub Pages Not Supported
 
-### Quick Deploy
+**OptiGenius cannot be deployed to GitHub Pages** because it's a full-stack Next.js application that requires:
+- Server-side rendering
+- API routes
+- Database connections
+- Node.js runtime
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/optigenius)
+GitHub Pages only supports static HTML/CSS/JS files. See `GITHUB_PAGES_ISSUE.md` for details.
 
-### Manual Deployment
+### ✅ Recommended: Deploy to Vercel (Free)
 
-For detailed deployment instructions, see **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)**
+OptiGenius is optimized for Vercel deployment with PostgreSQL database.
+
+**Quick Deploy:**
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/OptiGenius)
+
+**Manual Deployment:**
+
+For detailed deployment instructions, see `VERCEL_DEPLOYMENT.md`
 
 **Quick Steps:**
 1. Push your code to GitHub/GitLab/Bitbucket
@@ -177,13 +189,18 @@ For detailed deployment instructions, see **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPL
 5. Deploy!
 
 **Required Environment Variables:**
-- `DATABASE_URL` - PostgreSQL connection string
-- `DIRECT_URL` - Direct PostgreSQL connection
-- `NEXTAUTH_URL` - Your production URL
+- `DATABASE_URL` - PostgreSQL connection string (auto-added by Vercel)
+- `DIRECT_URL` - Direct PostgreSQL connection (auto-added by Vercel)
+- `NEXTAUTH_URL` - Your production URL (e.g., https://your-app.vercel.app)
 - `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
 - `OPENAI_API_KEY` - Your OpenAI API key
 
-See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for complete setup guide.
+**Alternative Platforms:**
+- **Netlify** - Similar to Vercel, free tier available
+- **Railway** - Great for full-stack apps, free tier available
+- **Render** - Another solid option with free tier
+
+See `VERCEL_DEPLOYMENT.md` for complete setup guide.
 
 ## License
 

@@ -76,6 +76,19 @@ interface SEOData {
   isAuthenticated?: boolean;
 }
 
+const getScoreColor = (score: number) => {
+  if (score >= 80) return "text-green-600";
+  if (score >= 60) return "text-yellow-600";
+  return "text-red-600";
+};
+
+const getScoreLabel = (score: number) => {
+  if (score >= 80) return "Excellent";
+  if (score >= 60) return "Good";
+  if (score >= 40) return "Needs Improvement";
+  return "Poor";
+};
+
 function ResultsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -184,19 +197,6 @@ function ResultsPageContent() {
       </div>
     );
   }
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
-  };
-
-  const getScoreLabel = (score: number) => {
-    if (score >= 80) return "Excellent";
-    if (score >= 60) return "Good";
-    if (score >= 40) return "Needs Improvement";
-    return "Poor";
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">

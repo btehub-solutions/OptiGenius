@@ -1,9 +1,26 @@
 # 🚀 START HERE - Deploy OptiGenius in 3 Steps
 
+## ⚠️ IMPORTANT: GitHub Pages Not Supported
+
+**OptiGenius CANNOT be deployed to GitHub Pages!**
+
+GitHub Pages only hosts static files. OptiGenius needs:
+- ❌ Server-side rendering
+- ❌ API routes
+- ❌ Database
+- ❌ Node.js runtime
+
+**Solution:** Deploy to Vercel (free, 10 minutes)
+
+See `GITHUB_PAGES_ISSUE.md` for full explanation.
+
+---
+
 ## ✅ Current Status
 - GitHub Repository: **CONNECTED** ✅
 - Code: **READY** ✅
 - Configuration: **COMPLETE** ✅
+- Target Platform: **VERCEL** (not GitHub Pages)
 
 ---
 
