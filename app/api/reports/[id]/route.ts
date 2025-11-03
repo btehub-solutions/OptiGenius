@@ -6,7 +6,7 @@ import { deleteReport, getReportById } from "@/lib/auth-store";
 // GET - Retrieve a specific report
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -18,7 +18,8 @@ export async function GET(
       );
     }
 
-    const report = await getReportById(params.id);
+    const { id } = await params;
+    const report = await getReportById(id);
     
     if (!report) {
       return NextResponse.json(
@@ -47,7 +48,7 @@ export async function GET(
 // DELETE - Delete a report
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -59,7 +60,8 @@ export async function DELETE(
       );
     }
 
-    const success = await deleteReport(params.id, session.user.id);
+    const { id } = await params;
+    const success = await deleteReport(id, session.user.id);
     
     if (!success) {
       return NextResponse.json(
