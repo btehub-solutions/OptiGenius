@@ -40,9 +40,18 @@ export async function GET(req: NextRequest) {
     const metaDescription = ($('meta[name="description"]').attr("content") || "").trim();
 
     const headings: { h1: string[]; h2: string[]; h3: string[] } = { h1: [], h2: [], h3: [] };
-    $("h1").each((_, el) => headings.h1.push($(el).text().trim()));
-    $("h2").each((_, el) => headings.h2.push($(el).text().trim()));
-    $("h3").each((_, el) => headings.h3.push($(el).text().trim()));
+    $("h1").each((_, el) => {
+      headings.h1.push($(el).text().trim());
+      return;
+    });
+    $("h2").each((_, el) => {
+      headings.h2.push($(el).text().trim());
+      return;
+    });
+    $("h3").each((_, el) => {
+      headings.h3.push($(el).text().trim());
+      return;
+    });
 
     const links: { href: string; text: string }[] = [];
     $("a[href]").each((_, el) => {
@@ -53,6 +62,7 @@ export async function GET(req: NextRequest) {
       } catch {}
       const text = $(el).text().trim().replace(/\s+/g, " ");
       links.push({ href: absolute, text });
+      return;
     });
 
     const scoreParts = [title ? 35 : 0, metaDescription ? 35 : 0, headings.h1.length ? 20 : 0, (headings.h2.length || headings.h3.length) ? 10 : 0];
