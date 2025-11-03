@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,7 +13,7 @@ type AnalyzeResponse = {
   score: number;
 };
 
-export default function ResultsPage() {
+function ResultsContent() {
   const params = useSearchParams();
   const url = params.get("url") || "";
   const [data, setData] = useState<AnalyzeResponse | null>(null);
@@ -155,5 +155,13 @@ export default function ResultsPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={<div className="container py-10"><p className="text-gray-600">Loading...</p></div>}>
+      <ResultsContent />
+    </Suspense>
   );
 }
