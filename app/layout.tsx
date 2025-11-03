@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NextAuthProvider from "@/components/providers/session-provider";
+import Navigation from "@/components/navigation";
 
 export const metadata: Metadata = {
   title: "OptiGenius - Analyze Any Website SEO Instantly",
@@ -27,7 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-white text-gray-900 antialiased">
-        {children}
+        <NextAuthProvider>
+          <Navigation />
+          {children}
+        </NextAuthProvider>
       </body>
     </html>
   );
